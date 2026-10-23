@@ -21,12 +21,12 @@
 - 官方安装/还原说明：https://aerial.qust.me/agent.md
 - 无障碍服务 `HomeGuardService` 已注册；按 **HOME 键**进入 Aerial
 
-### 2. 开机直达天光云影（已于 2026-10-23 晚取消）
-- ~~当前值~~：曾执行 `adb shell settings put system start_3rd_app com.chinablue.tv`；现已执行 `settings delete system start_3rd_app` 取消，当前值为空
+### 2. 开机直达 Aerial 桌面（2026-10-23 晚调整后）
+- 当前值：`adb shell settings put system start_3rd_app app.orchard.tv`（开机直达 Aerial 桌面）
+- 历史：曾设为 `com.chinablue.tv`（开机直达天光云影），后经多轮排查确认 PatchWall 的 `BootActivity` 通过 `AppUtil.openAutoApp` 读取该键执行开机直达；`settings delete` 清空后曾出现缓存残留拉起，改写成存在的包名 `app.orchard.tv` 后重启验证生效（开机 12 秒拉起 Aerial，返回桌面不再拉起天光云影）
 - 天光云影：包名 `com.chinablue.tv`，v3.3.5，主 Activity = `top.yogiczy.mytv.tv.MainActivity`
-- 曾实测：真重启后系统（uid 1000）自动拉起该应用，Aerial 守护放行，前台稳定为天光云影
-- 取消原因：用户改用 Aerial 桌面自带的开机启动设置；系统级开机直达与返回桌面时的再次拉起叠加，造成困扰
-- 重新启用方法：见下方「恢复方案」第一步
+- 注意：Aerial 桌面自带「开机时打开」功能（长按 App →「开机时打开」），与系统键无关，会在开机后由 Aerial 自行拉起配置的应用；要彻底不自动启动，需在 Aerial 桌面长按该 App 取消勾选
+- 重新启用直达天光云影：`adb shell settings put system start_3rd_app com.chinablue.tv`
 
 ### 3. 精简停用 12 个系统包
 以下全部用 `adb shell pm disable-user --user 0 <包名>` 停用（可逆）：
@@ -54,6 +54,7 @@
 ## 恢复方案
 
 ### 恢复原厂桌面 / 取消开机直达
+当前 `start_3rd_app = app.orchard.tv`（开机直达 Aerial）。想完全取消开机直达任何应用：
 ```
 adb shell settings delete system start_3rd_app
 ```
